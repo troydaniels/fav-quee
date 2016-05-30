@@ -16,19 +16,20 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-var interval = 150,  // Step time in milliseconds
+var interval = 100,  // Step time in milliseconds
     favText = document.getElementById('favicon').getAttribute('data-text'),
     textColour = document.getElementById('favicon').getAttribute('data-col'),
     favSize = offset = 16,  // Size of favicon, and L-R offset position of text
     canvas = document.createElement('canvas'),
-    img = document.createElement('img'),
-    link = document.getElementById('favicon').cloneNode(true);
+    img = document.createElement('img');
 
 canvas.height = canvas.width = favSize;
 img.src = document.getElementById('favicon').getAttribute('href');
 
 // And, go...
-window.setInterval(updateFavicon, interval);
+function startMarquee(){
+    var marquee = window.setInterval(updateFavicon, interval);
+}
 
 function updateFavicon() {
    if (canvas.getContext) {
@@ -36,8 +37,22 @@ function updateFavicon() {
       ctx.drawImage(img, 0, 0);
       ctx.font = 'bold 10px "helvetica", sans-serif';
       ctx.fillStyle = textColour;
-      ctx.fillText(favText, offset==-(favText.length*5)?(offset=favSize):offset--, 12);
-      link.href = canvas.toDataURL();
-      document.body.appendChild(link);
+      ctx.fillText(favText, offset<=-(favText.toString().length*6)?(offset=favSize):offset--, 12);
+      document.getElementById('favicon').setAttribute('href', canvas.toDataURL());
    }
+}
+
+function setText(newText){
+    favText = newText;
+    document.getElementById('favicon').setAttribute('data-text', newText);
+}
+
+function setColour(newColour){
+    textCol = newColour;
+    document.getElementById('favicon').setAttribute('data-col', newColour);
+}
+
+//Enough fun
+function removeMarquee(){
+    clearInterval(marquee);
 }
